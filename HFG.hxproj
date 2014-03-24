@@ -19,6 +19,7 @@
     <class path="Source" />
     <class path="C:\Program Files (x86)\FlashDevelop\Library\HAXE\classes" />
     <class path="C:\Motion-Twin\Haxe\lib\flixel\git" />
+    <class path="C:\Motion-Twin\Haxe\lib\flixel-addons\git" />
     <class path="Export\flash\haxe" />
   </classpaths>
   <!-- Build options -->
