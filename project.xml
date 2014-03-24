@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<meta title="HXG" package="org.aijai.vizel" version="1.0.0" company="Company Name" />
+	<app main="Main" path="Export" file="Vizel" />
+	<set name="SWF_VERSION" value="11.8" />
+	<window width="512" height="384" background="0xFFFFFF" fps="30"></window>
+	
+	<source path="Source" rename="" />
+	
+	<haxelib name="openfl" />
+	<classpath name="C:\Program Files (x86)\FlashDevelop\Library\HAXE\classes"></classpath>
+	<classpath name="C:\Motion-Twin\Haxe\lib\flixel\git"></classpath>
+	<classpath name="C:\Motion-Twin\Haxe\lib\flixel-addons\git"></classpath>
+	
+	<assets path="Assets" rename="assets" exclude="openfl.svg" />
+	<icon path="Assets/openfl.svg" />
+	<haxedef name="fdb" if="target_flash"/>
+</project>
