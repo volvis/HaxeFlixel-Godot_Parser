@@ -32,7 +32,7 @@ class GodotScene
 		}
 		else 
 		{
-			throw "Unknown TMX map format";
+			throw "Unknown format";
 		}
 		
 		if (source.hasNode.resource_file == false)
@@ -40,12 +40,38 @@ class GodotScene
 			throw "Not Godot format";
 		}
 		
-		/*for (elem in )
+		var rawSource = getDictionary(source.node.resource_file.node.main_resource.node.dictionary);
+		
+		var nodes = new Array < Map < String, Dynamic >> ();
+		
+		// Build a structured array of nodes from rawSource
+		var _a:Array<Int> = rawSource.get("nodes");
+		while (_a.length > 0)
 		{
-			trace(elem.name );
-		}*/
-		var dict = getDictionary(source.node.resource_file.node.main_resource.node.dictionary);
+			var node = new Map<String, Dynamic>();
+			node.set("parent", _a.shift());
+			node.set("owner", _a.shift());
+			node.set("type", rawSource.get("names")[_a.shift()]);
+			node.set("name", rawSource.get("names")[_a.shift()]);
+			node.set("instance", _a.shift());
+			var properties:UInt =  _a.shift();
+			while (properties > 0)
+			{
+				node.set(rawSource.get("names")[_a.shift()], rawSource.get("variants")[_a.shift()]);
+				properties = properties - 1;
+			}
+			var groups:UInt = _a.shift();
+			var groupArr = new Array<Int>();
+			while (groups > 0)
+			{
+				groupArr.push(_a.shift());
+				groups = groups - 1;
+			}
+			node.set("groups", groupArr);
+			nodes.push(node);
+		}
 		1;
+		// TODO Test how to make groups and how they behave
 	}
 	
 	
@@ -68,7 +94,6 @@ class GodotScene
 			
 			oddEven = !oddEven;
 		}
-		1;
 		return dict;
 	}
 	
@@ -95,6 +120,9 @@ class GodotScene
 				return { x:Std.parseFloat(_p[0]), y:Std.parseFloat(_p[1]) };
 			case "dictionary":
 				return getDictionary(Element);
+			case "resource":
+				// TODO: Scripts and image sources
+				return null;
 		}
 		return null;
 	}
