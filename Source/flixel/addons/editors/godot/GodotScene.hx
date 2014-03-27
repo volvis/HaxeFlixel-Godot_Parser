@@ -1,17 +1,24 @@
 package flixel.addons.editors.godot;
 
+import flixel.addons.display.FlxNestedSprite;
 import openfl.Assets;
 import haxe.xml.Fast;
+import haxe.io.Path;
 
 /**
  * ...
  * @author Pekka Heikkinen
  */
-class GodotScene
+class GodotScene extends FlxNestedSprite
 {
-
-	public function new(Data: Dynamic) 
+	/*
+	 * This will replace "res://" in external resource paths
+	*/
+	public static var assetPath:String = "assets";
+	
+	public function new(Data: Dynamic, X:Float = 0, Y:Float = 0) 
 	{
+		super(X, Y);
 		var source:Fast = null;
 		
 		#if (LOAD_CONFIG_REAL_TIME && !neko)
@@ -38,6 +45,18 @@ class GodotScene
 		if (source.hasNode.resource_file == false)
 		{
 			throw "Not Godot format";
+		}
+		
+		var resources = new Map<String, Map<String, Dynamic>>();
+		for ( resource in source.node.resource_file.nodes.resource )
+		{
+			resources.set(resource.att.path, getResource(resource));
+		}
+		
+		var external_resources = new Map<String, String>();
+		for ( ext_resource in source.node.resource_file.nodes.ext_resource )
+		{
+			external_resources.set(ext_resource.att.path, Path.join([assetPath, ext_resource.att.path.substring(6)]));
 		}
 		
 		var rawSource = getDictionary(source.node.resource_file.node.main_resource.node.dictionary);
@@ -70,11 +89,31 @@ class GodotScene
 			node.set("groups", groupArr);
 			nodes.push(node);
 		}
+		
 		1;
-		// TODO Test how to make groups and how they behave
 	}
 	
-	
+	private function getResource(Element:Fast)
+	{
+		var resource = new Map<String, Dynamic>();
+		if (Element.has.type)
+		{
+			resource.set("type", Element.att.type);
+		}
+		if (Element.has.type)
+		{
+			resource.set("path", Element.att.path);
+		}
+		if (Element.has.resource_type)
+		{
+			resource.set("resource_type", Element.att.resource_type);
+		}
+		for (element in Element.elements)
+		{
+			resource.set(element.att.name, parseElement(element));
+		}
+		return resource;
+	}
 	
 	private function getDictionary(Element:Fast)
 	{
@@ -120,9 +159,26 @@ class GodotScene
 				return { x:Std.parseFloat(_p[0]), y:Std.parseFloat(_p[1]) };
 			case "dictionary":
 				return getDictionary(Element);
+			case "vector2_array":
+				var _p = Element.innerHTML.split(",");
+				var _a = new Array<Dynamic>(); // TODO: Typed!
+				while (_p.length > 0)
+				{
+					_a.push( { x:Std.parseFloat(_p.shift()), y:Std.parseFloat(_p.shift()) } );
+				}
+				return _a;
+			case "real_array":
+				var _p = Element.innerHTML.split(",");
+				var _a = new Array<Float>();
+				while (_p.length > 0)
+				{
+					_a.push( Std.parseFloat(_p.shift()) );
+				}
+				return _a;
+			case "node_path":
+				return getStringArray(Element);
 			case "resource":
-				// TODO: Scripts and image sources
-				return null;
+				return getResource(Element);
 		}
 		return null;
 	}

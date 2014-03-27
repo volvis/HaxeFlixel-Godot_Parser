@@ -16,4 +16,6 @@
 	<assets path="Assets" rename="assets" exclude="openfl.svg" />
 	<icon path="Assets/openfl.svg" />
 	<haxedef name="fdb" if="target_flash"/>
+	<haxedef name="FLX_NO_DEBUG" />
+	<haxedef name="FLX_RENDER_TILE" />
 </project>

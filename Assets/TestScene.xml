@@ -1,15 +1,111 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<resource_file type="PackedScene" subresource_count="3" version="1.0" version_name="Godot Engine v1.0.3917-beta1">
+<resource_file type="PackedScene" subresource_count="8" version="1.0" version_name="Godot Engine v1.0.3917-beta1">
 	<ext_resource path="res://icon.png" type="Texture"></ext_resource>
+	<ext_resource path="res://avatar.png" type="Texture"></ext_resource>
 	<resource type="GDScript" path="local://1">
-		<string name="script/source"> "var a = 1" </string>
+		<string name="script/source"> "var a = 1;" </string>
+
+	</resource>
+	<resource type="Animation" path="local://2">
+		<string name="resource/name"> "Run" </string>
+		<real name="length"> 1 </real>
+		<bool name="loop"> False </bool>
+		<real name="step"> 0 </real>
+		<string name="tracks/0/type"> "value" </string>
+		<node_path name="tracks/0/path"> "Sprite:flip_h" </node_path>
+		<int name="tracks/0/interp"> 1 </int>
+		<dictionary name="tracks/0/keys" shared="false">
+			<string> "cont" </string>
+			<bool> False </bool>
+			<string> "transitions" </string>
+			<real_array  len="2"> 				1, 1 </real_array>
+			<string> "values" </string>
+			<array  len="2" shared="false">
+				<bool> True </bool>
+				<bool> False </bool>
+			</array>
+			<string> "times" </string>
+			<real_array  len="2"> 				0.03, 0.48 </real_array>
+		</dictionary>
+		<string name="tracks/1/type"> "value" </string>
+		<node_path name="tracks/1/path"> "AnimatedSprite:frame" </node_path>
+		<int name="tracks/1/interp"> 0 </int>
+		<dictionary name="tracks/1/keys" shared="false">
+			<string> "cont" </string>
+			<bool> False </bool>
+			<string> "transitions" </string>
+			<real_array  len="2"> 				1, 1 </real_array>
+			<string> "values" </string>
+			<array  len="2" shared="false">
+				<int> 1 </int>
+				<int> 0 </int>
+			</array>
+			<string> "times" </string>
+			<real_array  len="2"> 				0, 0.2 </real_array>
+		</dictionary>
+		<string name="tracks/2/type"> "value" </string>
+		<node_path name="tracks/2/path"> "AnimatedSprite:transform/pos" </node_path>
+		<int name="tracks/2/interp"> 0 </int>
+		<dictionary name="tracks/2/keys" shared="false">
+			<string> "cont" </string>
+			<bool> True </bool>
+			<string> "transitions" </string>
+			<real_array  len="2"> 				1, 1 </real_array>
+			<string> "values" </string>
+			<array  len="2" shared="false">
+				<vector2> 0, -50 </vector2>
+				<vector2> 1, -33 </vector2>
+			</array>
+			<string> "times" </string>
+			<real_array  len="2"> 				0, 0.2 </real_array>
+		</dictionary>
+
+	</resource>
+	<resource type="Animation" path="local://3">
+		<string name="resource/name"> "SomethingElse" </string>
+		<real name="length"> 1 </real>
+		<bool name="loop"> False </bool>
+		<real name="step"> 0.1 </real>
+
+	</resource>
+	<resource type="Animation" path="local://4">
+		<string name="resource/name"> "New Anim" </string>
+		<real name="length"> 1 </real>
+		<bool name="loop"> False </bool>
+		<real name="step"> 0.1 </real>
+		<string name="tracks/0/type"> "value" </string>
+		<node_path name="tracks/0/path"> "AnimatedSprite:visibility/opacity" </node_path>
+		<int name="tracks/0/interp"> 1 </int>
+		<dictionary name="tracks/0/keys" shared="false">
+			<string> "cont" </string>
+			<bool> True </bool>
+			<string> "transitions" </string>
+			<real_array  len="2"> 				1, 1 </real_array>
+			<string> "values" </string>
+			<array  len="2" shared="false">
+				<real> 1 </real>
+				<real> 0 </real>
+			</array>
+			<string> "times" </string>
+			<real_array  len="2"> 				0, 0.4 </real_array>
+		</dictionary>
+
+	</resource>
+	<resource type="SpriteFrames" path="local://5">
+		<array name="frames" len="2" shared="false">
+			<resource  resource_type="Texture" path="res://icon.png">  </resource>
+			<resource  resource_type="Texture" path="res://avatar.png">  </resource>
+		</array>
 
 	</resource>
 	<main_resource>
 		<dictionary name="_bundled" shared="false">
 			<string> "names" </string>
-			<string_array  len="29">
-				<string> "Node2D" </string>
+			<string_array  len="38">
+				<string> "Node" </string>
+				<string> "script/script" </string>
+				<string> "__meta__" </string>
+				<string> "Sprite" </string>
 				<string> "visibility/visible" </string>
 				<string> "visibility/opacity" </string>
 				<string> "visibility/self_opacity" </string>
@@ -17,10 +113,6 @@
 				<string> "transform/pos" </string>
 				<string> "transform/rot" </string>
 				<string> "transform/scale" </string>
-				<string> "script/script" </string>
-				<string> "__meta__" </string>
-				<string> "MahSprite" </string>
-				<string> "Sprite" </string>
 				<string> "texture" </string>
 				<string> "centered" </string>
 				<string> "offset" </string>
@@ -32,26 +124,31 @@
 				<string> "modulate" </string>
 				<string> "region" </string>
 				<string> "region_rect" </string>
-				<string> "ParallaxLayer" </string>
-				<string> "motion/scale" </string>
-				<string> "motion/mirroring" </string>
-				<string> "TestGroup" </string>
-				<string> "ParallaxLayer 2" </string>
-				<string> "ParallaxLayer 3" </string>
+				<string> "Position2D" </string>
+				<string> "CollisionShape2D" </string>
+				<string> "trigger" </string>
+				<string> "AnimationPlayer" </string>
+				<string> "playback/process_mode" </string>
+				<string> "playback/default_blend_time" </string>
+				<string> "root/root" </string>
+				<string> "anims/Run" </string>
+				<string> "anims/SomethingElse" </string>
+				<string> "anims/New Anim" </string>
+				<string> "playback/active" </string>
+				<string> "playback/speed" </string>
+				<string> "blend_times" </string>
+				<string> "autoplay" </string>
+				<string> "AnimatedSprite" </string>
+				<string> "frames" </string>
 			</string_array>
 			<string> "version" </string>
 			<int> 1 </int>
 			<string> "conn_count" </string>
 			<int> 0 </int>
 			<string> "node_count" </string>
-			<int> 5 </int>
+			<int> 6 </int>
 			<string> "variants" </string>
-			<array  len="15" shared="false">
-				<bool> True </bool>
-				<real> 1 </real>
-				<vector2> 0, 50 </vector2>
-				<real> 15 </real>
-				<vector2> 1, 1 </vector2>
+			<array  len="24" shared="false">
 				<resource  resource_type="Script" path="local://1">  </resource>
 				<dictionary  shared="false">
 					<string> "__editor_plugin_states__" </string>
@@ -62,7 +159,7 @@
 							<int> 0 </int>
 							<string> "sources" </string>
 							<array  len="1" shared="false">
-								<node_path> "/root/EditorNode/@Panel3/@VBoxContainer6/@HSplitContainer8/@VSplitContainer9/@VSplitContainer10/@VBoxContainer11/@Panel16/@Control18/@CanvasItemEditor5035/@Control5001/@Control5002/@Viewport5003/Node2D" </node_path>
+								<node_path> "/root/EditorNode/@Panel3/@VBoxContainer6/@HSplitContainer8/@VSplitContainer9/@VSplitContainer10/@VBoxContainer11/@Panel16/@Control18/@CanvasItemEditor5035/@Control5001/@Control5002/@Viewport5003/Node" </node_path>
 							</array>
 						</dictionary>
 						<string> "2D" </string>
@@ -72,7 +169,7 @@
 							<string> "zoom" </string>
 							<real> 1 </real>
 							<string> "ofs" </string>
-							<vector2> -136, -134 </vector2>
+							<vector2> -114, -117 </vector2>
 						</dictionary>
 						<string> "3D" </string>
 						<dictionary  shared="false">
@@ -159,19 +256,34 @@
 						<int> 0 </int>
 					</dictionary>
 					<string> "__editor_plugin_screen__" </string>
-					<string> "2D" </string>
+					<string> "Script" </string>
 				</dictionary>
-				<vector2> 0, 0 </vector2>
+				<bool> True </bool>
+				<real> 1 </real>
+				<vector2> 116, 32 </vector2>
 				<real> 0 </real>
+				<vector2> 1, 1 </vector2>
 				<resource  resource_type="Texture" path="res://icon.png">  </resource>
+				<vector2> 0, 0 </vector2>
 				<bool> False </bool>
 				<int> 1 </int>
 				<int> 0 </int>
 				<color> 1, 1, 1, 1 </color>
 				<rect2> 0, 0, 0, 0 </rect2>
+				<vector2> 145, -59.5 </vector2>
+				<vector2> 8.33333, 17.1667 </vector2>
+				<node_path> ".." </node_path>
+				<resource  resource_type="Animation" path="local://2">  </resource>
+				<resource  resource_type="Animation" path="local://3">  </resource>
+				<resource  resource_type="Animation" path="local://4">  </resource>
+				<array  len="0" shared="false">
+				</array>
+				<string> "" </string>
+				<vector2> 1, -33 </vector2>
+				<resource  resource_type="SpriteFrames" path="local://5">  </resource>
 			</array>
 			<string> "nodes" </string>
-			<int_array  len="144"> 				-1, -1, 0, 0, -1, 9, 1, 0, 2, 1, 3, 1, 4, 0, 5, 2, 6, 3, 7, 4, 8, 5, 9, 6, 0, 0, 0, 11, 10, -1, 18, 1, 0, 2, 1, 3, 1, 4, 0, 5, 7, 6, 8, 7, 4, 12, 9, 13, 0, 14, 7, 15, 10, 16, 10, 17, 11, 18, 11, 19, 12, 20, 13, 21, 10, 22, 14, 0, 1, 0, 23, 23, -1, 9, 1, 0, 2, 1, 3, 1, 4, 0, 5, 7, 6, 8, 7, 4, 24, 4, 25, 7, 1, 26, 1, 0, 23, 27, -1, 9, 1, 0, 2, 1, 3, 1, 4, 0, 5, 7, 6, 8, 7, 4, 24, 4, 25, 7, 0, 1, 0, 23, 28, -1, 9, 1, 0, 2, 1, 3, 1, 4, 0, 5, 7, 6, 8, 7, 4, 24, 4, 25, 7, 0 </int_array>
+			<int_array  len="156"> 				-1, -1, 0, 0, -1, 2, 1, 0, 2, 1, 0, 0, 0, 3, 3, -1, 18, 4, 2, 5, 3, 6, 3, 7, 2, 8, 4, 9, 5, 10, 6, 11, 7, 12, 2, 13, 8, 14, 2, 15, 9, 16, 10, 17, 10, 18, 11, 19, 12, 20, 9, 21, 13, 0, 0, 0, 22, 22, -1, 7, 4, 2, 5, 3, 6, 3, 7, 2, 8, 8, 9, 5, 10, 6, 0, 0, 0, 23, 23, -1, 8, 4, 2, 5, 3, 6, 3, 7, 2, 8, 14, 9, 5, 10, 15, 24, 9, 0, 0, 0, 25, 25, -1, 10, 26, 11, 27, 5, 28, 16, 29, 17, 30, 18, 31, 19, 32, 2, 33, 3, 34, 20, 35, 21, 0, 0, 0, 36, 36, -1, 12, 4, 2, 5, 3, 6, 3, 7, 2, 8, 22, 9, 5, 10, 6, 37, 23, 12, 2, 14, 9, 15, 9, 19, 12, 0 </int_array>
 			<string> "conns" </string>
 			<int_array  len="0"> 				 </int_array>
 		</dictionary>
