@@ -1,6 +1,5 @@
 package flixel.addons.editors.godot;
 
-import flixel.addons.display.FlxNestedSprite;
 import openfl.Assets;
 import haxe.xml.Fast;
 import haxe.io.Path;
@@ -9,16 +8,19 @@ import haxe.io.Path;
  * ...
  * @author Pekka Heikkinen
  */
-class GodotScene extends FlxNestedSprite
+class GodotScene
 {
 	/*
 	 * This will replace "res://" in external resource paths
 	*/
 	public static var assetPath:String = "assets";
 	
-	public function new(Data: Dynamic, X:Float = 0, Y:Float = 0) 
+	public var resources:Map < String, Map < String, Dynamic >> ;
+	public var external_resources:Map < String, String >;
+	public var nodes:Array < Map < String, Dynamic >>;
+	
+	public function new(Data: Dynamic) 
 	{
-		super(X, Y);
 		var source:Fast = null;
 		
 		#if (LOAD_CONFIG_REAL_TIME && !neko)
@@ -47,19 +49,23 @@ class GodotScene extends FlxNestedSprite
 			throw "Not Godot format";
 		}
 		
-		var resources = new Map<String, Map<String, Dynamic>>();
+		resources = new Map<String, Map<String, Dynamic>>();
 		for ( resource in source.node.resource_file.nodes.resource )
 		{
-			resources.set(resource.att.path, getResource(resource));
+			if (resource.att.type == "Animation")
+			{
+				new GodotAnimation(resource);
+			}
+			//resources.set(resource.att.path, getResource(resource));
 		}
 		
-		var external_resources = new Map<String, String>();
+		external_resources = new Map<String, String>();
 		for ( ext_resource in source.node.resource_file.nodes.ext_resource )
 		{
 			external_resources.set(ext_resource.att.path, Path.join([assetPath, ext_resource.att.path.substring(6)]));
 		}
 		
-		var rawSource = getDictionary(source.node.resource_file.node.main_resource.node.dictionary);
+		var rawSource = GodotXML.getDictionary(source.node.resource_file.node.main_resource.node.dictionary);
 		
 		var nodes = new Array < Map < String, Dynamic >> ();
 		
@@ -93,130 +99,6 @@ class GodotScene extends FlxNestedSprite
 		1;
 	}
 	
-	private function getResource(Element:Fast)
-	{
-		var resource = new Map<String, Dynamic>();
-		if (Element.has.type)
-		{
-			resource.set("type", Element.att.type);
-		}
-		if (Element.has.type)
-		{
-			resource.set("path", Element.att.path);
-		}
-		if (Element.has.resource_type)
-		{
-			resource.set("resource_type", Element.att.resource_type);
-		}
-		for (element in Element.elements)
-		{
-			resource.set(element.att.name, parseElement(element));
-		}
-		return resource;
-	}
-	
-	private function getDictionary(Element:Fast)
-	{
-		var oddEven = true;
-		var name:String = null;
-		var dict = new Map<String, Dynamic>();
-		for (element in Element.elements)
-		{
-			if (oddEven)
-			{
-				name = getString(element);
-			}
-			else
-			{
-				dict.set(name, parseElement(element));
-			}
-			
-			oddEven = !oddEven;
-		}
-		return dict;
-	}
-	
-	private function parseElement(Element:Fast):Dynamic
-	{
-		switch(Element.name)
-		{
-			case "string_array":
-				return getStringArray(Element);
-			case "int":
-				return Std.parseInt(Element.innerHTML);
-			case "string":
-				return getString(Element);
-			case "array":
-				return getArray(Element);
-			case "real":
-				return Std.parseFloat(Element.innerHTML);
-			case "bool":
-				return (StringTools.trim(Element.innerHTML) == "True" ? true : false);
-			case "int_array":
-				return getIntArray(Element);
-			case "vector2":
-				var _p = Element.innerHTML.split(",");
-				return { x:Std.parseFloat(_p[0]), y:Std.parseFloat(_p[1]) };
-			case "dictionary":
-				return getDictionary(Element);
-			case "vector2_array":
-				var _p = Element.innerHTML.split(",");
-				var _a = new Array<Dynamic>(); // TODO: Typed!
-				while (_p.length > 0)
-				{
-					_a.push( { x:Std.parseFloat(_p.shift()), y:Std.parseFloat(_p.shift()) } );
-				}
-				return _a;
-			case "real_array":
-				var _p = Element.innerHTML.split(",");
-				var _a = new Array<Float>();
-				while (_p.length > 0)
-				{
-					_a.push( Std.parseFloat(_p.shift()) );
-				}
-				return _a;
-			case "node_path":
-				return getStringArray(Element);
-			case "resource":
-				return getResource(Element);
-		}
-		return null;
-	}
-	
-	private function getArray(Element:Fast)
-	{
-		var _a = new Array<Dynamic>();
-		for (Item in Element.elements)
-		{
-			_a.push(parseElement(Item));
-		}
-		return _a;
-	}
-	
-	private function getIntArray(Element:Fast)
-	{
-		var _a = new Array<Int>();
-		for (Item in Element.innerHTML.split(","))
-		{
-			_a.push(Std.parseInt(Item));
-		}
-		return _a;
-	}
-	
-	
-	private function getStringArray(Element:Fast)
-	{
-		var _a = new Array<String>();
-		for (Item in Element.elements)
-		{
-			_a.push(getString(Item));
-		}
-		return _a;
-	}
-	
-	private inline function getString(Element:Fast)
-	{
-		return Element.innerHTML.substring(Element.innerHTML.indexOf("\"")+1, Element.innerHTML.lastIndexOf("\""));
-	}
+
 	
 }

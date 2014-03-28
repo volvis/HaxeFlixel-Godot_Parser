@@ -18,21 +18,22 @@
 			<string> "cont" </string>
 			<bool> False </bool>
 			<string> "transitions" </string>
-			<real_array  len="2"> 				1, 1 </real_array>
+			<real_array  len="3"> 				1, 1, 1 </real_array>
 			<string> "values" </string>
-			<array  len="2" shared="false">
+			<array  len="3" shared="false">
+				<bool> False </bool>
 				<bool> True </bool>
 				<bool> False </bool>
 			</array>
 			<string> "times" </string>
-			<real_array  len="2"> 				0.03, 0.48 </real_array>
+			<real_array  len="3"> 				0, 0.03, 0.48 </real_array>
 		</dictionary>
 		<string name="tracks/1/type"> "value" </string>
 		<node_path name="tracks/1/path"> "AnimatedSprite:frame" </node_path>
 		<int name="tracks/1/interp"> 0 </int>
 		<dictionary name="tracks/1/keys" shared="false">
 			<string> "cont" </string>
-			<bool> False </bool>
+			<bool> True </bool>
 			<string> "transitions" </string>
 			<real_array  len="2"> 				1, 1 </real_array>
 			<string> "values" </string>
@@ -62,13 +63,6 @@
 
 	</resource>
 	<resource type="Animation" path="local://3">
-		<string name="resource/name"> "SomethingElse" </string>
-		<real name="length"> 1 </real>
-		<bool name="loop"> False </bool>
-		<real name="step"> 0.1 </real>
-
-	</resource>
-	<resource type="Animation" path="local://4">
 		<string name="resource/name"> "New Anim" </string>
 		<real name="length"> 1 </real>
 		<bool name="loop"> False </bool>
@@ -89,6 +83,13 @@
 			<string> "times" </string>
 			<real_array  len="2"> 				0, 0.4 </real_array>
 		</dictionary>
+
+	</resource>
+	<resource type="Animation" path="local://4">
+		<string name="resource/name"> "SomethingElse" </string>
+		<real name="length"> 1 </real>
+		<bool name="loop"> False </bool>
+		<real name="step"> 0.1 </real>
 
 	</resource>
 	<resource type="SpriteFrames" path="local://5">
@@ -132,8 +133,8 @@
 				<string> "playback/default_blend_time" </string>
 				<string> "root/root" </string>
 				<string> "anims/Run" </string>
-				<string> "anims/SomethingElse" </string>
 				<string> "anims/New Anim" </string>
+				<string> "anims/SomethingElse" </string>
 				<string> "playback/active" </string>
 				<string> "playback/speed" </string>
 				<string> "blend_times" </string>
@@ -256,7 +257,7 @@
 						<int> 0 </int>
 					</dictionary>
 					<string> "__editor_plugin_screen__" </string>
-					<string> "Script" </string>
+					<string> "2D" </string>
 				</dictionary>
 				<bool> True </bool>
 				<real> 1 </real>
