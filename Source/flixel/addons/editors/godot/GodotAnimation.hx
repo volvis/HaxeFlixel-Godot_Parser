@@ -1,7 +1,5 @@
 package flixel.addons.editors.godot;
-import flixel.addons.editors.godot.GodotAnimation.GodotAnimationTrack;
-import flixel.addons.editors.godot.GodotAnimation.KeyType;
-import flixel.addons.editors.godot.GodotAnimation.Vector;
+import haxe.macro.Expr;
 import haxe.xml.Fast;
 import StringTools;
 
@@ -12,7 +10,7 @@ import StringTools;
 class GodotAnimation
 {
 	
-	public var tracks:Array<GodotAnimationTrack>;
+	public var tracks:Array<GodotAnimationTrackData>;
 	public var name:String;
 	public var length:Float;
 	public var loop:Bool;
@@ -20,7 +18,7 @@ class GodotAnimation
 	
 	public function new(Element:Fast) 
 	{
-		tracks = new Array<GodotAnimationTrack>();
+		tracks = new Array<GodotAnimationTrackData>();
 		for (element in Element.elements)
 		{
 			switch (element.att.name)
@@ -39,9 +37,9 @@ class GodotAnimation
 					var variant:String = path[2];
 					if (tracks[index] == null)
 					{
-						tracks[index] = new GodotAnimationTrack();
+						tracks[index] = new GodotAnimationTrackData();
 					}
-					var track:GodotAnimationTrack = tracks[index];
+					var track:GodotAnimationTrackData = tracks[index];
 					switch(variant)
 					{
 						case "type":
@@ -83,12 +81,77 @@ class GodotAnimation
 	}
 }
 
-class GodotAnimationTrackWrapper
+class GodotTypedTrack
 {
-	private var track:GodotAnimationTrack;
+	private var track:GodotAnimationTrackWrapper;
+	public function new(TrackWrapper:GodotAnimationTrackWrapper)
+	{
+		track = TrackWrapper;
+		keyType = track.keyType;
+	}
+	
+	public var keyType(default, null):KeyType;
+	
+	public var time(get, set):Float;
+	function set_time(newTime:Float)
+	{
+		track.time = newTime;
+		return track.time;
+	}
+	function get_time():Float
+	{
+		return track.time;
+	}
+}
+
+class GodotStringTrack extends GodotTypedTrack
+{
+	public function new(TrackWrapper:GodotAnimationTrackWrapper)
+	{
+		super(TrackWrapper);
+	}
+	
+	public var value(get, never):String;
+	function get_value():String
+	{
+		return track.stringValue;
+	}
+}
+
+class GodotBoolTrack extends GodotTypedTrack
+{
+	public function new(TrackWrapper:GodotAnimationTrackWrapper)
+	{
+		super(TrackWrapper);
+	}
+	
+	public var value(get, never):Bool;
+	function get_value():Bool
+	{
+		return track.boolValue;
+	}
+}
+
+class GodotFloatTrack extends GodotTypedTrack
+{
+	public function new(TrackWrapper:GodotAnimationTrackWrapper)
+	{
+		super(TrackWrapper);
+	}
+	
+	public var value(get, never):Float;
+	function get_value():Float
+	{
+		return track.floatValue;
+	}
+}
+
+private class GodotAnimationTrackWrapper
+{
+	private var track:GodotAnimationTrackData;
 	private var length:Float;
 	private var loop:Bool;
-	public function new(Track:GodotAnimationTrack, Length:Float, Loop:Bool)
+	public function new(Track:GodotAnimationTrackData, Length:Float, Loop:Bool)
 	{
 		track = Track;
 		length = Length;
@@ -108,13 +171,63 @@ class GodotAnimationTrackWrapper
 		{
 			newTime %= length;
 		}
+		var keyIndex = track.times.length;
+		while (track.times[keyIndex] > newTime)
+		{
+			keyIndex--;
+		}
+		switch (track.keyType)
+		{
+			case KeyType.StringKeys:
+				stringValue = track.stringKeys[keyIndex];
+			case KeyType.BooleanKeys:
+				boolValue = track.booleanKeys[keyIndex];
+			case KeyType.FloatKeys:
+				if (keyIndex == track.times.length)
+				{
+					floatValue = track.floatKeys[keyIndex];
+				}
+				else
+				{
+					floatValue = calculateEase("floatKeys");
+				}
+			case KeyType.IntKeys:
+				if (keyIndex == track.times.length)
+				{
+					intValue = track.intKeys[keyIndex];
+				}
+				else
+				{
+					intValue = Std.int(calculateEase("intKeys"));
+				}
+			default:
+				//Do none
+		}
 		return newTime;
+	}
+	
+	macro public static function calculateEase(keyType:String):Expr
+	{
+		return macro ease(newTime-track.times[keyIndex], track.$keyType[keyIndex], track.$keyType[keyIndex + 1], track.times[keyIndex]-track.times[keyIndex + 1]);
 	}
 	
 	public var keyType(get, never):KeyType;
 	function get_keyType()
 	{
 		return track.keyType;
+	}
+	
+	function ease(CurrentTime:Float, StartValue:Float, EndValue:Float, Duration:Float):Float
+	{
+		switch (track.interp)
+		{
+			case InterpolationType.Nearest:
+				return easeNearest(CurrentTime, StartValue, EndValue-StartValue, Duration);
+			case InterpolationType.Linear:
+				return easeLinear(CurrentTime, StartValue, EndValue-StartValue, Duration);
+			case InterpolationType.Cubic:
+				return easeCubic(CurrentTime, StartValue, EndValue-StartValue, Duration);
+		}
 	}
 	
 	
@@ -150,7 +263,7 @@ class GodotAnimationTrackWrapper
 	}
 }
 
-class GodotAnimationTrack
+private class GodotAnimationTrackData
 {
 	public function new() {}
 	public var type:String;
