@@ -1,7 +1,10 @@
-package flixel.addons.editors.godot;
+package flixel.addons.editors.godot.archive;
+import flixel.addons.editors.godot.archive.GodotAnimation.GodotBoolTrack;
+import flixel.FlxObject;
 import haxe.macro.Expr;
 import haxe.xml.Fast;
 import StringTools;
+import flixel.addons.editors.godot.GodotCommon;
 
 /**
  * ...
@@ -10,15 +13,16 @@ import StringTools;
 class GodotAnimation
 {
 	
-	public var tracks:Array<GodotAnimationTrackData>;
+	
 	public var name:String;
-	public var length:Float;
-	public var loop:Bool;
-	public var step:Float;
+	var length:Float;
+	var loop:Bool;
+	var step:Float;
+	//var tracks:Array<GodotAnimationTrackData>;
 	
 	public function new(Element:Fast) 
 	{
-		tracks = new Array<GodotAnimationTrackData>();
+		var tracks = new Array<GodotAnimationTrackData>();
 		for (element in Element.elements)
 		{
 			switch (element.att.name)
@@ -78,6 +82,16 @@ class GodotAnimation
 			}
 		}
 		1;
+		
+		/*var GTT = new Array<GodotTypedTrack>();
+		for (track in tracks)
+		{
+			switch (track.keyType)
+			{
+				case KeyType.BooleanKeys:
+					new GodotBoolTrack(new GodotAnimationTrackWrapper(track, length, loop));
+			}
+		}*/
 	}
 }
 
@@ -101,6 +115,22 @@ class GodotTypedTrack
 	function get_time():Float
 	{
 		return track.time;
+	}
+	
+	public var path(get, never):String;
+	function get_path():String
+	{
+		return track.track.path;
+	}
+	
+	public function reset():Void
+	{
+		track.time = 0;
+	}
+	
+	public function delta(Value:Float)
+	{
+		track.time += Value;
 	}
 }
 
@@ -148,9 +178,9 @@ class GodotFloatTrack extends GodotTypedTrack
 
 private class GodotAnimationTrackWrapper
 {
-	private var track:GodotAnimationTrackData;
-	private var length:Float;
-	private var loop:Bool;
+	public var track:GodotAnimationTrackData;
+	public var length:Float;
+	public var loop:Bool;
 	public function new(Track:GodotAnimationTrackData, Length:Float, Loop:Bool)
 	{
 		track = Track;
@@ -171,11 +201,16 @@ private class GodotAnimationTrackWrapper
 		{
 			newTime %= length;
 		}
+		if (newTime > length)
+		{
+			newTime = length;
+		}
 		var keyIndex = track.times.length;
 		while (track.times[keyIndex] > newTime)
 		{
 			keyIndex--;
 		}
+		// Update track values
 		switch (track.keyType)
 		{
 			case KeyType.StringKeys:
@@ -183,33 +218,48 @@ private class GodotAnimationTrackWrapper
 			case KeyType.BooleanKeys:
 				boolValue = track.booleanKeys[keyIndex];
 			case KeyType.FloatKeys:
-				if (keyIndex == track.times.length)
+				if (keyIndex == track.times.length || newTime == track.times[keyIndex])
 				{
 					floatValue = track.floatKeys[keyIndex];
 				}
 				else
 				{
-					floatValue = calculateEase("floatKeys");
+					floatValue = ease(newTime-track.times[keyIndex], track.floatKeys[keyIndex], track.floatKeys[keyIndex + 1], track.times[keyIndex]-track.times[keyIndex + 1]);
 				}
 			case KeyType.IntKeys:
-				if (keyIndex == track.times.length)
+				if (keyIndex == track.times.length || newTime == track.times[keyIndex])
 				{
 					intValue = track.intKeys[keyIndex];
 				}
 				else
 				{
-					intValue = Std.int(calculateEase("intKeys"));
+					intValue = Std.int(ease(newTime-track.times[keyIndex], track.intKeys[keyIndex], track.intKeys[keyIndex + 1], track.times[keyIndex]-track.times[keyIndex + 1]));
 				}
-			default:
-				//Do none
+			case KeyType.VectorKeys:
+				if (keyIndex == track.times.length || newTime == track.times[keyIndex])
+				{
+					vectorValue = track.vectorKeys[keyIndex];
+				}
+				else
+				{
+					vectorValue.x = ease(newTime-track.times[keyIndex], track.vectorKeys[keyIndex].x, track.vectorKeys[keyIndex + 1].x, track.times[keyIndex] - track.times[keyIndex + 1]);
+					vectorValue.y = ease(newTime-track.times[keyIndex], track.vectorKeys[keyIndex].y, track.vectorKeys[keyIndex + 1].y, track.times[keyIndex] - track.times[keyIndex + 1]);
+				}
 		}
 		return newTime;
 	}
 	
-	macro public static function calculateEase(keyType:String):Expr
+	/*macro public static function calculateEase(keyType:String, param:String = null):Expr
 	{
-		return macro ease(newTime-track.times[keyIndex], track.$keyType[keyIndex], track.$keyType[keyIndex + 1], track.times[keyIndex]-track.times[keyIndex + 1]);
-	}
+		if (param == null)
+		{
+			return macro ease(newTime-track.times[keyIndex], track.$keyType[keyIndex], track.$keyType[keyIndex + 1], track.times[keyIndex]-track.times[keyIndex + 1]);
+		}
+		else
+		{
+			return macro ease(newTime-track.times[keyIndex], track.$keyType[keyIndex].$param, track.$keyType[keyIndex + 1].$param, track.times[keyIndex]-track.times[keyIndex + 1]);
+		}
+	}*/
 	
 	public var keyType(get, never):KeyType;
 	function get_keyType()
@@ -283,24 +333,31 @@ private class GodotAnimationTrackData
 	public var vectorKeys:Array<Vector>;
 }
 
-typedef Vector =
+/*interface AnimationController
 {
-	x:Float,
-	y:Float,
+	function update(Delta:Float):Void;
+	function reset():Void;
 }
 
-@:enum abstract KeyType(Int)
+class VisibilityController implements AnimationController
 {
-    var BooleanKeys = 0;
-    var StringKeys = 1;
-    var IntKeys = 2;
-	var FloatKeys = 3;
-	var VectorKeys = 4;
-}
-
-@:enum abstract InterpolationType(Int) from Int to Int
-{
-	var Nearest = 0;
-	var Linear = 1;
-	var Cubic = 2;
-}
+	var track:GodotBoolTrack;
+	var target:FlxObject;
+	
+	public function new(Track:GodotBoolTrack, Target:FlxObject) {
+		track = Track;
+		target = Target;
+	}
+	
+	public function update(Delta:Float):Void
+	{
+		track.delta(Delta);
+		target.visible = track.value;
+	}
+	
+	public function reset():Void
+	{
+		track.reset();
+		update(0);
+	}
+}*/

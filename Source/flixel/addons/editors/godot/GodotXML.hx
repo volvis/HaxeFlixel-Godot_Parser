@@ -1,6 +1,7 @@
 package flixel.addons.editors.godot;
 
 import haxe.xml.Fast;
+import flixel.addons.editors.godot.GodotCommon;
 
 /**
  * ...
@@ -16,7 +17,7 @@ class GodotXML
 		{
 			resource.set("type", Element.att.type);
 		}
-		if (Element.has.type)
+		if (Element.has.path)
 		{
 			resource.set("path", Element.att.path);
 		}
@@ -70,19 +71,23 @@ class GodotXML
 				return (StringTools.trim(Element.innerHTML) == "True" ? true : false);
 			case "int_array":
 				return getIntArray(Element);
-			case "vector2":
+			case (_ == "vector2" || _ == "real_array" || _ == "color") => true:
 				var _p = Element.innerHTML.split(",");
-				return { x:Std.parseFloat(_p[0]), y:Std.parseFloat(_p[1]) };
+				return [while (_p.length > 0) Std.parseFloat(_p.shift())];
+				//return { x:Std.parseFloat(_p[0]), y:Std.parseFloat(_p[1]) };
 			case "dictionary":
 				return getDictionary(Element);
 			case "vector2_array":
 				var _p = Element.innerHTML.split(",");
-				return [while (_p.length > 0) { x:Std.parseFloat(_p.shift()), y:Std.parseFloat(_p.shift()) } ];
-			case "real_array":
+				return [while (_p.length > 0) [Std.parseFloat(_p.shift()), Std.parseFloat(_p.shift()) ] ];
+			/*case "real_array":
 				var _p = Element.innerHTML.split(",");
 				return [while (_p.length > 0) Std.parseFloat(_p.shift())];
+			case "color":
+				var _p = Element.innerHTML.split(",");
+				return { a: Std.parseFloat(_p.shift()), b: Std.parseFloat(_p.shift()), g: Std.parseFloat(_p.shift()), r: Std.parseFloat(_p.shift()) };*/
 			case "node_path":
-				return getStringArray(Element);
+				return getString(Element);
 			case "resource":
 				return getResource(Element);
 		}

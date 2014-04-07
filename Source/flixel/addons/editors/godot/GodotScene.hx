@@ -1,8 +1,17 @@
 package flixel.addons.editors.godot;
 
+import flixel.group.FlxSpriteGroup;
+import haxe.Timer;
 import openfl.Assets;
 import haxe.xml.Fast;
 import haxe.io.Path;
+
+import flixel.util.FlxRect;
+import flixel.util.FlxPoint;
+import flixel.FlxSprite;
+import flixel.addons.editors.godot.nodes.GodotNode;
+import flixel.addons.editors.godot.GodotCommon.NodeParam;
+import flixel.addons.editors.godot.nodes.GodotBasic;
 
 /**
  * ...
@@ -16,12 +25,36 @@ class GodotScene
 	public static var assetPath:String = "assets";
 	
 	public var resources:Map < String, Map < String, Dynamic >> ;
-	public var external_resources:Map < String, String >;
-	public var nodes:Array < Map < String, Dynamic >>;
+	public static var external_resources:Map < String, String >;
+	public var sceneStructure:Array < Map < String, Dynamic >> ;
+	
+	public var nodes:Array<GodotBasic>;
+	
+	var time:Float = Timer.stamp();
+	
+	public function update()
+	{
+		var now:Float = Timer.stamp();
+		var delta:Float = now - time;
+		time = now;
+		for (node in nodes)
+		{
+			if (node.update(delta))
+			{
+				//var path = '${node.name}:${node.type}';
+				// Send or collect notifications
+			}
+		}
+	}
 	
 	public function new(Data: Dynamic) 
 	{
 		var source:Fast = null;
+		
+		if (external_resources == null)
+		{
+			external_resources = new Map<String, String>();
+		}
 		
 		#if (LOAD_CONFIG_REAL_TIME && !neko)
 		// Load the asset located in the assets foldier, not the copies within bin folder
@@ -52,11 +85,7 @@ class GodotScene
 		resources = new Map<String, Map<String, Dynamic>>();
 		for ( resource in source.node.resource_file.nodes.resource )
 		{
-			if (resource.att.type == "Animation")
-			{
-				new GodotAnimation(resource);
-			}
-			//resources.set(resource.att.path, getResource(resource));
+			resources.set(resource.att.path, GodotXML.getResource(resource));
 		}
 		
 		external_resources = new Map<String, String>();
@@ -67,7 +96,7 @@ class GodotScene
 		
 		var rawSource = GodotXML.getDictionary(source.node.resource_file.node.main_resource.node.dictionary);
 		
-		var nodes = new Array < Map < String, Dynamic >> ();
+		sceneStructure = new Array < Map < String, Dynamic >> ();
 		
 		// Build a structured array of nodes from rawSource
 		var _a:Array<Int> = rawSource.get("nodes");
@@ -93,9 +122,28 @@ class GodotScene
 				groups = groups - 1;
 			}
 			node.set("groups", groupArr);
-			nodes.push(node);
+			sceneStructure.push(node);
 		}
 		
+		nodes = [];
+		for (struct in sceneStructure)
+		{
+			var node = new GodotNode();
+			for (param in struct.keys())
+			{
+				switch(param)
+				{
+					case NodeParam.name:
+						node.name = struct.get(param);
+					case NodeParam.type:
+						node.type = struct.get(param);
+					default:
+						node.insert(param, struct.get(param));
+				}
+			}
+			
+			nodes.push(node);
+		}
 		1;
 	}
 	
