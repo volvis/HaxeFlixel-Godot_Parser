@@ -1,7 +1,7 @@
-package flixel.addons.editors.godot;
+package org.aijai.godot;
 
 import haxe.xml.Fast;
-import flixel.addons.editors.godot.GodotCommon;
+import org.aijai.godot.GodotCommon;
 
 /**
  * ...

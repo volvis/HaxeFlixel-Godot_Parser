@@ -1,4 +1,4 @@
-package flixel.addons.editors.godot;
+package org.aijai.godot;
 
 import flixel.group.FlxSpriteGroup;
 import haxe.Timer;
@@ -9,9 +9,9 @@ import haxe.io.Path;
 import flixel.util.FlxRect;
 import flixel.util.FlxPoint;
 import flixel.FlxSprite;
-import flixel.addons.editors.godot.nodes.GodotNode;
-import flixel.addons.editors.godot.GodotCommon.NodeParam;
-import flixel.addons.editors.godot.nodes.GodotBasic;
+import org.aijai.godot.node.GodotNode;
+import org.aijai.godot.node.GodotBasic;
+import org.aijai.godot.node.NodeParam;
 
 /**
  * ...
@@ -28,9 +28,18 @@ class GodotScene
 	public static var external_resources:Map < String, String >;
 	public var sceneStructure:Array < Map < String, Dynamic >> ;
 	
-	public var nodes:Array<GodotBasic>;
-	
+	var nodes:Array<GodotBasic>;
 	var time:Float = Timer.stamp();
+	
+	public function getNodeCount():Int
+	{
+		return nodes.length;
+	}
+	
+	public function getNodeID(ID:Int):String
+	{
+		return nodes[ID].name;
+	}
 	
 	public function update()
 	{

@@ -1,6 +1,6 @@
-package flixel.addons.editors.godot.nodes;
-import flixel.addons.editors.godot.GodotCommon.NodeTypes;
-import flixel.addons.editors.godot.properties.Behaviour;
+package org.aijai.godot.node;
+import org.aijai.godot.GodotCommon.NodeTypes;
+import org.aijai.godot.node.properties.Behaviour;
 /**
  * ...
  * @author Pekka Heikkinen
@@ -24,9 +24,8 @@ class GodotBasic
 	
 	public function update(Delta:Float):Bool
 	{
-		var hasUpdated = false;
 		updatePaths = [];
-		if (updateFlags & UpdateParams.IntType)
+		if (updateFlags & UpdateParams.IntType > 0)
 		{
 			for (key in _ints.keys())
 			{
@@ -34,39 +33,44 @@ class GodotBasic
 				if (behaviour.update(Delta)) updatePaths.push(key);
 			}
 		}
-		if (updateFlags & UpdateParams.FloatType)
+		if (updateFlags & UpdateParams.FloatType > 0)
 		{
-			for (behaviour in _floats)
+			for (key in _floats.keys())
 			{
-				hasUpdated |= behaviour.update(Delta);
+				var behaviour = _floats.get(key);
+				if (behaviour.update(Delta)) updatePaths.push(key);
 			}
 		}
-		if (updateFlags & UpdateParams.StringType)
+		if (updateFlags & UpdateParams.StringType > 0)
 		{
-			for (behaviour in _strings)
+			for (key in _strings.keys())
 			{
-				hasUpdated |= behaviour.update(Delta);
+				var behaviour = _strings.get(key);
+				if (behaviour.update(Delta)) updatePaths.push(key);
 			}
 		}
-		if (updateFlags & UpdateParams.BoolType)
+		if (updateFlags & UpdateParams.BoolType > 0)
 		{
-			for (behaviour in _bools)
+			for (key in _bools.keys())
 			{
-				hasUpdated |= behaviour.update(Delta);
+				var behaviour = _bools.get(key);
+				if (behaviour.update(Delta)) updatePaths.push(key);
 			}
 		}
-		if (updateFlags & UpdateParams.MapStringType)
+		if (updateFlags & UpdateParams.MapStringType > 0)
 		{
-			for (behaviour in _mapStrings)
+			for (key in _mapStrings.keys())
 			{
-				hasUpdated |= behaviour.update(Delta);
+				var behaviour = _mapStrings.get(key);
+				if (behaviour.update(Delta)) updatePaths.push(key);
 			}
 		}
-		if (updateFlags & UpdateParams.FloatArrayType)
+		if (updateFlags & UpdateParams.FloatArrayType > 0)
 		{
-			for (behaviour in mFloatArrayType)
+			for (key in _floatArrays.keys())
 			{
-				hasUpdated |= behaviour.update(Delta);
+				var behaviour = _floatArrays.get(key);
+				if (behaviour.update(Delta)) updatePaths.push(key);
 			}
 		}
 		return (updatePaths.length > 0);
@@ -96,7 +100,7 @@ class GodotBasic
 			case (Std.is(_, Array) && Std.is(_[0], Float)) => true:
 				if (_floatArrays == null) _floatArrays = new ParamMap<Array<Float>>();
 				_floatArrays.set(Name, new Behaviour<Array<Float>>(Value));
-				updateFlags |= UpdateParams.ArrayFloatType;
+				updateFlags |= UpdateParams.FloatArrayType;
 			default:
 				unknown = true;
 		}
@@ -105,7 +109,7 @@ class GodotBasic
 }
 
 
-@:abstract enum UpdateParams(Int) from Int to Int
+@:enum abstract UpdateParams(Int) from Int to Int
 {
 	var BoolType = 1;
 	var FloatType = 2;

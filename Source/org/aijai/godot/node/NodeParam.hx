@@ -1,4 +1,4 @@
-package flixel.addons.editors.godot.nodes;
+package org.aijai.godot.node;
 
 /**
  * @author Pekka Heikkinen
@@ -24,7 +24,7 @@ package flixel.addons.editors.godot.nodes;
 	var blendMode = "visibility/blend_mode";
 	
 	// Node2D
-	var transformation = "transform/*"
+	var transformation = "transform/*";
 	var position = "transform/pos";
 	var scale = "transform/scale";
 	var rotation = "transform/rot";

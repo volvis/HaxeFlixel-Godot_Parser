@@ -1,8 +1,8 @@
 package flixel.addoflixel.addons.editors.godot;
 
-import flixel.addons.editors.godot.GodotCommon.NodeTypes;
-import flixel.addons.editors.godot.GodotCommon.NodeParam;
-import flixel.addons.editors.godot.GodotCommon.Vector;
+import org.aijai.godot.GodotCommon.NodeTypes;
+import org.aijai.godot.GodotCommon.NodeParam;
+import org.aijai.godot.GodotCommon.Vector;
 import flixel.FlxSprite;
 import flixel.util.FlxPoint;
 import flixel.util.FlxRect;

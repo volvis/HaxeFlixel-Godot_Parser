@@ -1,7 +1,7 @@
-package flixel.addons.editors.godot.properties;
-import flixel.addons.editors.godot.properties.Modifier.AnimatedModifier;
-import flixel.addons.editors.godot.properties.Modifier.ConstantModifier;
-import flixel.addons.editors.godot.GodotCommon.Vector;
+package org.aijai.godot.node.properties;
+import org.aijai.godot.node.properties.Modifier.AnimatedModifier;
+import org.aijai.godot.node.properties.Modifier.ConstantModifier;
+import org.aijai.godot.GodotCommon.Vector;
 
 /**
  * ...
@@ -146,9 +146,9 @@ class CubicCoordinateModifier extends AnimatedModifier<Vector>
 
 class LinkModifier extends Modifier<Vector>
 {
-	var linkParent:Modifier<Vector>;
+	var linkParent:GodotBasic;
 	
-	public function new(LinkParent:Modifier<Vector>)
+	public function new(LinkParent:GodotBasic)
 	{
 		super();
 		linkParent = LinkParent;
@@ -157,9 +157,9 @@ class LinkModifier extends Modifier<Vector>
 	
 	override public function value(Value:Vector, Time:Float, Start:Float = 0):Vector 
 	{
-		var linkCoordinate:Vector = linkParent.value(Value, Time, Start);
+		/*var linkCoordinate:Vector = linkParent.value(Value, Time, Start);
 		Value.x += linkCoordinate.x;
-		Value.y += linkCoordinate.y;
+		Value.y += linkCoordinate.y;*/
 		return Value;
 	}
 }

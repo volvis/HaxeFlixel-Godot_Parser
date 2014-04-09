@@ -4,7 +4,7 @@ import flixel.FlxObject;
 import haxe.macro.Expr;
 import haxe.xml.Fast;
 import StringTools;
-import flixel.addons.editors.godot.GodotCommon;
+import org.aijai.godot.GodotCommon;
 
 /**
  * ...

@@ -1,4 +1,4 @@
-package flixel.addons.editors.godot.nodes;
+package org.aijai.godot.node;
 
 /**
  * ...

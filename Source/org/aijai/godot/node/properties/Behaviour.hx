@@ -1,4 +1,4 @@
-package flixel.addons.editors.godot.properties;
+package org.aijai.godot.node.properties;
 
 /**
  * ...
@@ -8,25 +8,24 @@ class Behaviour<T>
 {
 	var defaultValue:T;
 	var cachedValue:T;
+	var modifiers:Array<Modifier<T>>;
 	
 	public function new(DefaultValue:T) 
 	{
 		modifiers = [];
-		listeners = [];
 		defaultValue = DefaultValue;
 		cachedValue = DefaultValue;
 	}
 	
-	var modifiers:Array<Modifier<T>>;
 	
 	/**
 	 * Updates behaviour value
 	 * @param	Delta
 	 * @return	True if update causes the value to change
 	 */
-	public function update(Delta:Float):Bool;
+	public function update(Delta:Float):Bool
 	{
-		if (modifers.length == 0)
+		if (modifiers.length == 0)
 		{
 			return false;
 		}
@@ -40,7 +39,7 @@ class Behaviour<T>
 					Value = modifier.value(Value, Delta);
 				}
 			}
-			if (Value !== cachedValue)
+			if (Value != cachedValue)
 			{
 				cachedValue = Value;
 				return true;
@@ -59,7 +58,8 @@ class Behaviour<T>
 	
 	public function add(Comp:Modifier<T>)
 	{
-		modifiers.push(Comp);
+		modifiers.unshift(Comp);
+		//modifiers.push(Comp);
 	}
 }
 
