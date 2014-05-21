@@ -1,3 +1,9 @@
 Experimental tools for reading Godot scenes into HaxeFlixel.
 
 HaxeFlixel lacks a common IDE for managing objects. Godot, while a fully functional game engine, is at the time of writing still in its infancy. However the IDE offers plenty of attractive tools for content authoring. The idea here is to read in Godot scene files, which can be saved as plain text XML, and recreate the Node2D items in HaxeFlixel.
+
+----
+
+2014-05-21
+
+While reading Godot scenes was making good headway, it's become an issue that Godot objects tend to have parenting and operate in local coordinates. Maintaining this relationship through HaxeFlixel, which to my knowledge doesn't support it, is quite a challenge. Maybe even impossible.
